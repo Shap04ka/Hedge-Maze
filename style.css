@@ -1,0 +1,83 @@
+#container{
+	position:absolute;
+	width:1200px;
+	height:800px;
+	border:2px solid #000000;
+	perspective:600px;
+	overflow:hidden;
+}
+
+#world{
+	position:absolute;
+	width:inherit;
+	height:inherit;
+	transform-style:preserve-3d;
+}
+
+.square{
+	position:absolute;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+}
+
+.menu{
+	position:absolute;
+	width:inherit;
+	height:inherit;
+	background-color:#C0FFFF;
+	display:none;
+}
+
+.button {
+    position: absolute;
+    width: 900px;
+    height: 250px;
+    background-color: #FFF;
+    cursor: pointer;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    font-style: italic;
+    font-size: 36px;
+    font-family: sans-serif;
+}
+
+.button:hover {
+    background-color: #DDD;
+}
+
+#button1{
+	top:100px;
+	left:150px;
+}
+
+#button2{
+	top:450px;
+	left:150px;
+}
+
+#button3{
+	top:450px;
+	left:150px;
+}
+
+#hud {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	z-index: 10; /* Элементы будут гарантированно поверх 3D мира */
+	font-family: sans-serif;
+	font-weight: bold;
+	font-size: 20px;
+	color: #FFF;
+}
+
+.hud-item {
+	background: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный фон */
+	padding: 8px 15px;
+	margin-bottom: 5px;
+	border-radius: 5px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}

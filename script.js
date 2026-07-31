@@ -95,6 +95,10 @@ var keys = [
     [-1500, 30, 2150, 0, 0, 0, 50, 50, "Patterns/sapling.png"],
     [1500, 30, 2150, 0, 0, 0, 50, 50, "Patterns/sapling.png"]
 ];
+
+// Pristine copies of the collectible layouts, used to restore them on reset
+var initialCoins = JSON.parse(JSON.stringify(coins));
+var initialKeys = JSON.parse(JSON.stringify(keys));
     
 //variables for movement
 var PressLeft = 0;
@@ -125,9 +129,11 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("DOMContentLoaded", function() {
     var menu1 = document.getElementById("menu1");
     var menu2 = document.getElementById("menu2");
+    var menu3 = document.getElementById("menu3");
     var btnStart = document.getElementById("button1");
     var btnInstruction = document.getElementById("button2");
     var btnBack = document.getElementById("button3");
+    var btnPlayAgain = document.getElementById("button4");
 
     btnStart.onclick = function(e) {
         menu1.style.display = "none";
@@ -135,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         if (!coinSound) {
             coinSound = new Audio("Patterns/flap.mp3");
-            keySound = new Audio("Patterns/sapling.png");
+            keySound = new Audio("Patterns/shovel.mp3");
             coinSound.volume = 0.5;
             keySound.volume = 0.5;
         }
@@ -155,6 +161,16 @@ document.addEventListener("DOMContentLoaded", function() {
         menu2.style.display = "none";
         menu1.style.display = "block";
         e.stopPropagation();
+    };
+
+    btnPlayAgain.onclick = function(e) {
+        e.stopPropagation();
+        resetGame();
+        menu3.style.display = "none";
+
+        if (!gameInterval) {
+            gameInterval = setInterval(Repeat, 10);
+        }
     };
 });
 
@@ -297,7 +313,7 @@ function CreateSquares(squares,string){
 }
 
 function interact(squares, string, objectSound){
-    if (!objectSound) return; // Защита, если звуки еще не инициализированы кнопкой
+    if (!objectSound) return; 
     
     for (i = 0; i < squares.length; i++){
         let dis = (squares[i][0] - pawn.x)**2 + (squares[i][1] - pawn.y)**2 + (squares[i][2] - pawn.z)**2;
@@ -318,6 +334,10 @@ function interact(squares, string, objectSound){
             } else if (string === "key") {
                 collectedKeys++;
                 document.getElementById("key-count").innerText = collectedKeys;
+
+                if (collectedKeys === keys.length) {
+                    winGame();
+                }
             }
         }
     }
@@ -336,6 +356,49 @@ function rotate(squares,string,ra){
                 "rotateZ(" + squares[i][5] + "deg)";
         }
     }
+}
+
+function winGame(){
+    clearInterval(gameInterval);
+    gameInterval = null;
+
+    if (lock) {
+        document.exitPointerLock();
+    }
+
+    document.getElementById("menu3").style.display = "flex";
+}
+
+function refreshSquareElement(squares, string, i){
+    let el = document.getElementById(string + i);
+    if(!el) return;
+    el.style.display = "";
+    el.style.transform =
+        "translate3d(" + (600 - squares[i][6]/2 + squares[i][0]) + "px," +
+        (400 - squares[i][7]/2 + squares[i][1]) + "px," +
+        squares[i][2] + "px)" +
+        "rotateX(" + squares[i][3] + "deg)" +
+        "rotateY(" + squares[i][4] + "deg)" +
+        "rotateZ(" + squares[i][5] + "deg)";
+}
+
+function resetGame(){
+    // Reset player to the starting position/orientation
+    pawn.x = 0; pawn.y = 0; pawn.z = 0;
+    pawn.rx = 0; pawn.ry = 0;
+    world.style.transform = "translateZ(600px)rotateX(0deg)rotateY(0deg)translate3d(0px,0px,0px)";
+
+    // Reset counters
+    collectedCoins = 0;
+    collectedKeys = 0;
+    document.getElementById("coin-count").innerText = collectedCoins;
+    document.getElementById("key-count").innerText = collectedKeys;
+
+    // Restore collectible layouts and put their elements back on screen
+    coins = JSON.parse(JSON.stringify(initialCoins));
+    keys = JSON.parse(JSON.stringify(initialKeys));
+    for (let i = 0; i < coins.length; i++) refreshSquareElement(coins, "coin", i);
+    for (let i = 0; i < keys.length; i++) refreshSquareElement(keys, "key", i);
 }
 
 CreateNewWorld();

@@ -63,6 +63,30 @@
 	left:150px;
 }
 
+#menu3 {
+	display: none;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background-color: #C0FFC0;
+}
+
+#win-text {
+	max-width: 800px;
+	margin: 0 0 40px 0;
+	font-family: sans-serif;
+	font-size: 40px;
+	font-weight: bold;
+	text-align: center;
+	color: #234023;
+}
+
+#button4 {
+	position: static;
+	width: 500px;
+	height: 120px;
+}
+
 #hud {
 	position: absolute;
 	top: 20px;
